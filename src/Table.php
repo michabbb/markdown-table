@@ -1,7 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace kbATeam\MarkdownTable;
 
+use Generator;
 use RuntimeException;
 
 /**
@@ -17,19 +19,19 @@ use RuntimeException;
 class Table
 {
     /**
-     * @var \kbATeam\MarkdownTable\Column[]
+     * @var Column[]
      */
-    private $columns;
+    private array $columns;
 
     /**
      * @var int The number of columns.
      */
-    private $column_count;
+    private int $column_count;
 
     /**
      * @var string Markdown cell separator string.
      */
-    private static $separator = ' | ';
+    private static string $separator = ' | ';
 
     /**
      * Table constructor.
@@ -47,7 +49,8 @@ class Table
 
     /**
      * Remove all defined columns from this table.
-     * @return \kbATeam\MarkdownTable\Table $this
+     *
+     * @return Table $this
      */
     public function clearColumns(): Table
     {
@@ -58,9 +61,11 @@ class Table
 
     /**
      * Adds a column to the table.
+     *
      * @param string|int Unique name/id for the column position.
-     * @param \kbATeam\MarkdownTable\Column $column
-     * @return \kbATeam\MarkdownTable\Table $this
+     * @param Column $column
+     *
+     * @return Table $this
      */
     public function addColumn($pos, Column $column): Table
     {
@@ -75,11 +80,13 @@ class Table
 
     /**
      * Return the column on the requested position.
-     * @param string|int $pos The column position to fetch.
-     * @return \kbATeam\MarkdownTable\Column
-     * @throws \RuntimeException in case the given position does not exist.
+     *
+     * @param int|string $pos The column position to fetch.
+     *
+     * @return Column
+     * @throws RuntimeException in case the given position does not exist.
      */
-    public function getColumn($pos): Column
+    public function getColumn(int|string $pos): Column
     {
         if (!array_key_exists($pos, $this->columns)) {
             throw new RuntimeException(sprintf('Column position %s does not exist!', $pos));
@@ -99,10 +106,12 @@ class Table
 
     /**
      * Remove a column from the table.
-     * @param string|int $pos The column position to remove.
-     * @return \kbATeam\MarkdownTable\Table $this
+     *
+     * @param int|string $pos The column position to remove.
+     *
+     * @return Table $this
      */
-    public function dropColumn($pos): Table
+    public function dropColumn(int|string $pos): Table
     {
         if (array_key_exists($pos, $this->columns)) {
             $this->column_count--;
@@ -114,7 +123,7 @@ class Table
     /**
      * Reset the length of each column to either three or the title length.
      */
-    private function resetColumnLengths()
+    private function resetColumnLengths(): void
     {
         foreach ($this->columns as $column) {
             $column->resetMaxLength();
@@ -123,12 +132,14 @@ class Table
 
     /**
      * Generate a markdown table from the defined columns and their rows.
+     *
      * @param array $rows Rows of the markdown table.
-     * @return \Generator generates a string for each row including the headers.
-     * @throws \RuntimeException in case no columns are defined, or in case the rows
+     *
+     * @return Generator generates a string for each row including the headers.
+     * @throws RuntimeException in case no columns are defined, or in case the rows
      *                           parameter is not an array of arrays.
      */
-    public function generate(array $rows)
+    public function generate(array $rows): Generator
     {
         if (!$this->hasColumns()) {
             throw new RuntimeException('No columns defined.');
@@ -202,9 +213,11 @@ class Table
 
     /**
      * Get a markdown table as string with line breaks.
+     *
      * @param array $rows The rows to create a table from.
+     *
      * @return string The markdown table.
-     * @throws \RuntimeException in case no columns are defined, or in case the rows
+     * @throws RuntimeException in case no columns are defined, or in case the rows
      *                           parameter is not an array of arrays.
      */
     public function getString(array $rows): string

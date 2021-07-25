@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace kbATeam\MarkdownTable;
 
@@ -19,44 +20,39 @@ class Column
     /**
      * @const int column alignment left
      */
-    const ALIGN_LEFT = 1;
+    public const ALIGN_LEFT = 1;
 
     /**
      * @const int column alignment right
      */
-    const ALIGN_RIGHT = 2;
+    public const ALIGN_RIGHT = 2;
 
     /**
      * @const int column alignment center
      */
-    const ALIGN_CENTER = 3;
+    public const ALIGN_CENTER = 3;
 
-    /**
-     * @var string column title
-     */
-    private $title;
+    private ?string $title;
 
-    /**
-     * @var int column alignment
-     */
-    private $alignment;
+    private ?int $alignment;
 
     /**
      * @var int max length of column
      */
-    private $length;
+    private int $length;
 
     /**
      * @var string PCRE regex to validate alignment constants
      */
-    private $regex_alignment;
+    private string $regex_alignment;
 
     /**
      * Column constructor.
-     * @param string $title The columns' title
+     *
+     * @param string   $title     The columns' title
      * @param int|null $alignment Optional column alignment. Default: ALIGN_LEFT
      */
-    public function __construct($title, $alignment = null)
+    public function __construct(string $title, int $alignment = null)
     {
         $this->regex_alignment = '~^('.self::ALIGN_LEFT.'|'.self::ALIGN_RIGHT.'|'.self::ALIGN_CENTER.')$~';
         $this->length = 3;
@@ -69,10 +65,12 @@ class Column
 
     /**
      * Set the columns' title.
+     *
      * @param string $title The columns' title.
-     * @throws \RuntimeException in case the title is no string or too short.
+     *
+     * @throws RuntimeException in case the title is no string or too short.
      */
-    public function setTitle($title)
+    public function setTitle(string $title): void
     {
         if (!is_string($title)) {
             throw new RuntimeException('Column title is no string.');
@@ -93,10 +91,12 @@ class Column
 
     /**
      * Set the columns' alignment.
+     *
      * @param int $alignment The columns' alignment.
-     * @throws \RuntimeException in case the given alignment is no alignment constant.
+     *
+     * @throws RuntimeException in case the given alignment is no alignment constant.
      */
-    public function setAlignment($alignment)
+    public function setAlignment(int $alignment): void
     {
         $this->alignment = (int)filter_var(
             $alignment,
@@ -116,10 +116,12 @@ class Column
 
     /**
      * Sets the columns' maximum length.
+     *
      * @param int $length The columns' maximum length.
-     * @throws \RuntimeException in case the given length is no positive integer.
+     *
+     * @throws RuntimeException in case the given length is no positive integer.
      */
-    public function setMaxLength($length)
+    public function setMaxLength(int $length): void
     {
         if (!is_int($length) || $length < 0) {
             throw new RuntimeException('Column length needs to be a positive integer.');
@@ -131,18 +133,20 @@ class Column
     /**
      * Reset a columns maximum length to a minimum of three or the title length.
      */
-    public function resetMaxLength()
+    public function resetMaxLength(): void
     {
         $this->length = max(3, mb_strlen($this->title));
     }
 
     /**
      * Create a column cell string using the given content.
+     *
      * @param string $content The cells' content.
+     *
      * @return string The cells content with spaces to fill the whole cell length.
-     * @throws \RuntimeException in case the given content is longer than the maximum length of this cell.
+     * @throws RuntimeException in case the given content is longer than the maximum length of this cell.
      */
-    public function createCell($content): string
+    public function createCell(string $content): string
     {
         $diff = $this->length - mb_strlen($content);
 
@@ -158,7 +162,7 @@ class Column
                 $diff_left = floor($diff / 2);
                 $result = sprintf(
                     '%s%s%s',
-                    str_repeat(' ', $diff_left),
+                    str_repeat(' ', (int)$diff_left),
                     $content,
                     str_repeat(' ', $diff - $diff_left)
                 );
@@ -187,23 +191,16 @@ class Column
      */
     public function createHeaderSeparator(): string
     {
-        switch ($this->alignment) {
-            case self::ALIGN_RIGHT:
-                $result = sprintf(
-                    '%s:',
-                    str_repeat('-', $this->length-1)
-                );
-                break;
-            case self::ALIGN_CENTER:
-                $result = sprintf(
-                    ':%s:',
-                    str_repeat('-', $this->length-2)
-                );
-                break;
-            default:
-                $result = str_repeat('-', $this->length);
-                break;
-        }
-        return $result;
+        return match ($this->alignment) {
+            self::ALIGN_RIGHT => sprintf(
+                '%s:',
+                str_repeat('-', $this->length - 1)
+            ),
+            self::ALIGN_CENTER => sprintf(
+                ':%s:',
+                str_repeat('-', $this->length - 2)
+            ),
+            default => str_repeat('-', $this->length),
+        };
     }
 }

@@ -3,13 +3,14 @@
 namespace Tests\kbATeam\MarkdownTable;
 
 use kbATeam\MarkdownTable\Column;
+use PHPUnit\Framework\TestCase;
 
-class ColumnTest extends \PHPUnit_Framework_TestCase
+class ColumnTest extends TestCase
 {
     /**
      * Test creating a left aligned column.
      */
-    public function testLeftAlignmentColumn()
+    public function testLeftAlignmentColumn(): void
     {
         $l = new Column('My Column');
         $this->assertEquals('My Column', $l->createHeader());
@@ -20,7 +21,7 @@ class ColumnTest extends \PHPUnit_Framework_TestCase
     /**
      * Test creating a right aligned column.
      */
-    public function testRightAlignmentColumn()
+    public function testRightAlignmentColumn(): void
     {
         $r = new Column('My Column', Column::ALIGN_RIGHT);
         $this->assertEquals('My Column', $r->createHeader());
@@ -31,7 +32,7 @@ class ColumnTest extends \PHPUnit_Framework_TestCase
     /**
      * Test creating a centered column.
      */
-    public function testCenterAlignmentColumn()
+    public function testCenterAlignmentColumn(): void
     {
         $c = new Column('My Column');
         $c->setAlignment(Column::ALIGN_CENTER);
@@ -44,7 +45,7 @@ class ColumnTest extends \PHPUnit_Framework_TestCase
      * Test that an overwriting shorter title, which is not the default use-case,
      * results in longer columns.
      */
-    public function testOverwritingWithShorterTitle()
+    public function testOverwritingWithShorterTitle(): void
     {
         $a = new Column('You should not be able to read this.');
         $a->setTitle('My Column');
@@ -57,7 +58,7 @@ class ColumnTest extends \PHPUnit_Framework_TestCase
      * Test whether a minimum length of three is maintained even if title and content
      * are shorter.
      */
-    public function testDefaultLengthOfThree()
+    public function testDefaultLengthOfThree(): void
     {
         $l = new Column('A');
         $l->setMaxLength(mb_strlen('ab'));
@@ -69,7 +70,7 @@ class ColumnTest extends \PHPUnit_Framework_TestCase
     /**
      * Exception test in case something else than a string is used as title.
      */
-    public function testNonStringAsTitle()
+    public function testNonStringAsTitle(): void
     {
         $this->setExpectedException(\RuntimeException::class, 'Column title is no string.');
         new Column(new \stdClass());
@@ -78,7 +79,7 @@ class ColumnTest extends \PHPUnit_Framework_TestCase
     /**
      * Exception test in case the title is empty.
      */
-    public function testShortTitle()
+    public function testShortTitle(): void
     {
         $this->setExpectedException(\RuntimeException::class, 'Column title is too short.');
         new Column('`');
@@ -87,7 +88,7 @@ class ColumnTest extends \PHPUnit_Framework_TestCase
     /**
      * Exception test in case an invalid alignment constant is used.
      */
-    public function testInvalidAlignment()
+    public function testInvalidAlignment(): void
     {
         $this->setExpectedException(\RuntimeException::class, 'Invalid alignment constant.');
         new Column('My Column', 1000);
@@ -96,7 +97,7 @@ class ColumnTest extends \PHPUnit_Framework_TestCase
     /**
      * Exception test in case the content to be rendered is unexpectedly long.
      */
-    public function testUnexpectedlyLongContent()
+    public function testUnexpectedlyLongContent(): void
     {
         $a = new Column('AAA');
         $this->setExpectedException(\RuntimeException::class, 'Content length too long.');
@@ -106,7 +107,7 @@ class ColumnTest extends \PHPUnit_Framework_TestCase
     /**
      * Exception test for invalid string lengths.
      */
-    public function testNonIntegerMaxLength()
+    public function testNonIntegerMaxLength(): void
     {
         $a = new Column('AAA');
         $this->setExpectedException(\RuntimeException::class, 'Column length needs to be a positive integer.');

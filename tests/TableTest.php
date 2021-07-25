@@ -4,13 +4,14 @@ namespace Tests\kbATeam\MarkdownTable;
 
 use kbATeam\MarkdownTable\Column;
 use kbATeam\MarkdownTable\Table;
+use PHPUnit\Framework\TestCase;
 
-class TableTest extends \PHPUnit_Framework_TestCase
+class TableTest extends TestCase
 {
     /**
      * Test a simple one-column table with a data array.
      */
-    public function testSimpleTable()
+    public function testSimpleTable(): void
     {
         $t = new Table();
         $t->addColumn(0, new Column('Col.A'));
@@ -32,7 +33,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
      * The names have been generated using fakenamegenerator.com. Any similarities to
      * existing people is not intended.
      */
-    public function testConstructorWithColumns()
+    public function testConstructorWithColumns(): void
     {
         $t = new Table(['first_name', 'last_name']);
         $expect =  'first_name | last_name   '.PHP_EOL
@@ -50,7 +51,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
     /**
      * Test what happens in case a column is dropped.
      */
-    public function testDroppingColumn()
+    public function testDroppingColumn(): void
     {
         $t = new Table(['first_name', 'last_name']);
         $expect =  'last_name   '.PHP_EOL
@@ -69,7 +70,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
     /**
      * Test changing a column title.
      */
-    public function testChangeColumnTitle()
+    public function testChangeColumnTitle(): void
     {
         $t = new Table(['first_name', 'last_name']);
         $expect =   'first_name | surname     '.PHP_EOL
@@ -88,7 +89,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
     /**
      * Test exception when requesting a non existent column.
      */
-    public function testExceptionNonExistentColumnPosition()
+    public function testExceptionNonExistentColumnPosition(): void
     {
         $t = new Table(['first_name']);
         $this->setExpectedException(\RuntimeException::class, 'Column position last_name does not exist!');
@@ -98,7 +99,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
     /**
      * Test for the exception thrown in case no columns have been defined.
      */
-    public function testExceptionWithNoColumnsDefined()
+    public function testExceptionWithNoColumnsDefined(): void
     {
         $t = new Table();
         $this->setExpectedException(\RuntimeException::class, 'No columns defined.');
@@ -108,7 +109,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
     /**
      * Test for the exception thrown in case a one-dimensional array is provided.
      */
-    public function testExceptionWithOneDimensionalArray()
+    public function testExceptionWithOneDimensionalArray(): void
     {
         $t = new Table(['first_name', 'last_name']);
         $this->setExpectedException(\RuntimeException::class, 'Rows need to be an array of arrays.');
